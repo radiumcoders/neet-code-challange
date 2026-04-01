@@ -1,19 +1,19 @@
-import { Button } from "@/components/ui/button"
+import Container from "@/components/core/container"
+import Navbar from "@/components/core/navbar"
 
 export default function Page() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
-        </div>
-      </div>
-    </div>
+    <Container className="p-0">
+      <Navbar />
+
+      <main className="p-8">
+        <h1 className="mb-2 font-heading text-lg font-medium">
+          A better way to prepare for coding interviews
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Pick up where you left off or start a new challenge.
+        </p>
+      </main>
+    </Container>
   )
 }
