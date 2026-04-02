@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 
 type Difficulty = "Easy" | "Medium" | "Hard"
 
@@ -9,7 +10,7 @@ type Course = {
   description: string
   duration: string
   difficulty: Difficulty
-  hoverGradient: string
+  hoverGradientIdx?: number
 }
 
 type Category = {
@@ -151,60 +152,129 @@ function DifficultyBadge({ difficulty }: { difficulty: Course["difficulty"] }) {
   )
 }
 
-function CourseCard({ course }: { course: Course }) {
+const CARD_GRADIENTS = [
+  {
+    backgroundImage: `
+      radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.5) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(120,119,198,0.1) 0%, transparent 50%)`,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(circle at 20% 80%, rgba(255, 182, 153, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 244, 214, 0.5) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255, 182, 153, 0.1) 0%, transparent 50%)`,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(circle at 30% 70%, rgba(173, 216, 230, 0.35), transparent 60%),
+      radial-gradient(circle at 70% 30%, rgba(255, 182, 193, 0.4), transparent 60%)`,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(circle at top left, rgba(56, 193, 182, 0.4), transparent 70%)`,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(circle at 50% 100%, rgba(253, 224, 71, 0.3) 0%, transparent 60%),
+      radial-gradient(circle at 50% 100%, rgba(251, 191, 36, 0.3) 0%, transparent 70%),
+      radial-gradient(circle at 50% 100%, rgba(244, 114, 182, 0.3) 0%, transparent 80%)
+    `,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(ellipse at 20% 30%, rgba(56, 189, 248, 0.3) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 70%, rgba(139, 92, 246, 0.25) 0%, transparent 70%),
+      radial-gradient(ellipse at 60% 20%, rgba(236, 72, 153, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 40% 80%, rgba(34, 197, 94, 0.15) 0%, transparent 65%)
+    `,
+  },
+]
+
+function Crosshair({ className }: { className?: string }) {
   return (
-    <div className="group flex cursor-pointer flex-col overflow-hidden rounded-none border border-border bg-card transition-colors hover:border-primary/30">
-      {/* Course Header (Minimal, Theme-Responsive) */}
-      <div className="relative flex h-28 w-full items-center border-b border-border/50 p-5">
-        {/* Base Background */}
-        <div className="absolute inset-0 bg-muted/30" />
+    <div
+      className={cn(
+        "absolute z-20 flex h-3 w-3 items-center justify-center",
+        className
+      )}
+    >
+      <div className="absolute h-full w-[1px] bg-border" />
+      <div className="absolute h-[1px] w-full bg-border" />
+    </div>
+  )
+}
 
-        {/* Very subtle static geometric dots (Light Mode) */}
-        <div
-          className="absolute inset-0 opacity-[0.03] dark:hidden"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
-        {/* Very subtle static geometric dots (Dark Mode) */}
-        <div
-          className="absolute inset-0 hidden opacity-[0.05] dark:block"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
+import { useMotionTemplate, useMotionValue } from "framer-motion"
+import { MouseEvent as ReactMouseEvent } from "react"
 
-        {/* Hover State: Extremely faint grainy gradient */}
-        <div
-          className={cn(
-            "absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100",
-            course.hoverGradient
-          )}
-        >
-          {/* Grain Noise Overlay */}
-          <div
-            className="absolute inset-0 opacity-[0.12] mix-blend-overlay"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-            }}
-          />
-        </div>
+function CourseCard({ course, index }: { course: Course; index: number }) {
+  const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length]
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
 
-        {/* Course Title Overlay (Theme responsive text color) */}
-        <span className="relative z-10 font-heading text-xl font-bold tracking-tight text-foreground">
+  function handleMouseMove({
+    currentTarget,
+    clientX,
+    clientY,
+  }: ReactMouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect()
+    mouseX.set(clientX - left)
+    mouseY.set(clientY - top)
+  }
+
+  return (
+    <div
+      className="group relative -mt-px -ml-px flex cursor-pointer flex-col overflow-hidden border border-border bg-card p-8 transition-colors hover:z-10 sm:min-h-[220px]"
+      onMouseMove={handleMouseMove}
+    >
+      {/* Background Gradient on Hover */}
+      <div
+        className="absolute inset-0 z-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:group-hover:opacity-20"
+        style={gradient}
+      />
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              350px circle at ${mouseX}px ${mouseY}px,
+              rgba(139, 92, 246, 0.15),
+              transparent 80%
+            )
+          `,
+        }}
+      />
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:hidden"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              350px circle at ${mouseX}px ${mouseY}px,
+              rgba(56, 189, 248, 0.15),
+              transparent 80%
+            )
+          `,
+        }}
+      />
+
+      {/* Grid Crosshairs */}
+      <Crosshair className="-top-[6px] -left-[6px]" />
+      <Crosshair className="-top-[6px] -right-[6px]" />
+      <Crosshair className="-bottom-[6px] -left-[6px]" />
+      <Crosshair className="-right-[6px] -bottom-[6px]" />
+
+      <div className="relative z-10 flex h-full flex-col">
+        <h4 className="mb-2 font-heading text-xl font-bold tracking-tight text-foreground">
           {course.title}
-        </span>
-      </div>
-
-      {/* Course Content */}
-      <div className="flex flex-1 flex-col p-5">
+        </h4>
         <p className="mb-6 flex-1 text-sm leading-relaxed text-muted-foreground">
           {course.description}
         </p>
 
         {/* Footer Tags */}
         <div className="flex items-center gap-3">
-          <span className="rounded-none border border-border bg-muted/30 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+          <span className="text-xs font-medium text-muted-foreground">
             {course.duration}
           </span>
           <DifficultyBadge difficulty={course.difficulty} />
@@ -213,7 +283,6 @@ function CourseCard({ course }: { course: Course }) {
     </div>
   )
 }
-
 export function CoursesSection() {
   return (
     <section className="relative flex flex-col items-center border-b border-border bg-background px-8 py-16 md:py-24">
@@ -226,21 +295,22 @@ export function CoursesSection() {
         className="absolute right-0 -bottom-1 z-10 h-2 w-1 bg-border"
         style={{ clipPath: "polygon(100% 0, 0 50%, 100% 100%)" }}
       />
-      <div
-        className="absolute top-0 left-0 z-10 h-2 w-1 bg-border"
-        style={{ clipPath: "polygon(0 0, 100% 50%, 0 100%)" }}
-      />
-      <div
-        className="absolute top-0 right-0 z-10 h-2 w-1 bg-border"
-        style={{ clipPath: "polygon(100% 0, 0 50%, 100% 100%)" }}
-      />
 
-      <div className="flex w-full max-w-6xl flex-col">
+      <div className="relative z-10 flex w-full max-w-6xl flex-col">
         {/* Header */}
         <div className="mb-16 flex flex-col items-center text-center">
-          <h2 className="mb-4 font-heading text-4xl font-bold tracking-tight sm:text-5xl">
-            Courses
-          </h2>
+          <div className="relative mb-4 w-fit">
+            <h2 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl">
+              Courses
+            </h2>
+            <motion.div
+              initial={{ width: "100%" }}
+              whileInView={{ width: "0%" }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: "easeInOut", delay: 0.1 }}
+              className="absolute top-0 right-0 bottom-0 z-20 bg-foreground"
+            />
+          </div>
           <p className="text-lg text-muted-foreground">
             Structured learning paths from fundamentals to advanced topics.
           </p>
@@ -255,18 +325,35 @@ export function CoursesSection() {
             >
               {/* Category Info */}
               <div className="flex flex-col lg:col-span-4">
-                <h3 className="mb-4 font-heading text-3xl font-bold tracking-tight">
-                  {category.title}
-                </h3>
+                <div className="relative mb-4 w-fit">
+                  <h3 className="font-heading text-3xl font-bold tracking-tight">
+                    {category.title}
+                  </h3>
+                  <motion.div
+                    initial={{ width: "100%" }}
+                    whileInView={{ width: "0%" }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 0.5,
+                      ease: "easeInOut",
+                      delay: 0.1 + idx * 0.15,
+                    }}
+                    className="absolute top-0 right-0 bottom-0 z-20 bg-foreground"
+                  />
+                </div>
                 <p className="text-base leading-relaxed text-muted-foreground">
                   {category.description}
                 </p>
               </div>
 
               {/* Course Cards Grid */}
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:col-span-8">
+              <div className="relative grid grid-cols-1 p-px sm:grid-cols-2 lg:col-span-8">
                 {category.courses.map((course, courseIdx) => (
-                  <CourseCard key={courseIdx} course={course} />
+                  <CourseCard
+                    key={courseIdx}
+                    course={course}
+                    index={courseIdx + idx * 3}
+                  />
                 ))}
               </div>
             </div>

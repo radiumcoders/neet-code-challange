@@ -1,14 +1,14 @@
 "use client"
 
+import { AboutSection } from "@/components/about-section"
 import Container from "@/components/core/container"
 import Navbar from "@/components/core/navbar"
-import { LogoCloud } from "@/components/logo-cloud"
-import { RoadmapSection } from "@/components/roadmap-section"
 import { CoursesSection } from "@/components/courses-section"
-import { AboutSection } from "@/components/about-section"
 import { Footer } from "@/components/footer"
+import { LogoCloud } from "@/components/logo-cloud"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { motion } from "framer-motion"
 
 const MAIN_TESTIMONIALS = [
   {
@@ -47,20 +47,68 @@ const ADDITIONAL_TESTIMONIALS = [
   },
 ]
 
+const CARD_GRADIENTS = [
+  {
+    backgroundImage: `
+      radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.5) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(120,119,198,0.1) 0%, transparent 50%)`,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(circle at 20% 80%, rgba(255, 182, 153, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 244, 214, 0.5) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(255, 182, 153, 0.1) 0%, transparent 50%)`,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(circle at 30% 70%, rgba(173, 216, 230, 0.35), transparent 60%),
+      radial-gradient(circle at 70% 30%, rgba(255, 182, 193, 0.4), transparent 60%)`,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(circle at top left, rgba(56, 193, 182, 0.4), transparent 70%)`,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(circle at 50% 100%, rgba(253, 224, 71, 0.3) 0%, transparent 60%),
+      radial-gradient(circle at 50% 100%, rgba(251, 191, 36, 0.3) 0%, transparent 70%),
+      radial-gradient(circle at 50% 100%, rgba(244, 114, 182, 0.3) 0%, transparent 80%)
+    `,
+  },
+  {
+    backgroundImage: `
+      radial-gradient(ellipse at 20% 30%, rgba(56, 189, 248, 0.3) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 70%, rgba(139, 92, 246, 0.25) 0%, transparent 70%),
+      radial-gradient(ellipse at 60% 20%, rgba(236, 72, 153, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 40% 80%, rgba(34, 197, 94, 0.15) 0%, transparent 65%)
+    `,
+  },
+]
+
 function TestimonialCard({
   name,
   company,
   image,
   quote,
+  index,
 }: {
   name: string
   company: string
   image: string
   quote?: string
+  index: number
 }) {
+  const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length]
+
   return (
-    <div className="flex h-full flex-col gap-4 rounded-none border border-border bg-card p-6 text-card-foreground">
-      <div className="flex items-center gap-3">
+    <div className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-none border border-border bg-card p-6 text-card-foreground transition-colors">
+      {/* Hover Background Gradient */}
+      <div
+        className="absolute inset-0 z-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100 dark:group-hover:opacity-20"
+        style={gradient}
+      />
+      <div className="relative z-10 flex items-center gap-3">
         <div className="h-10 w-10 overflow-hidden rounded-full bg-muted">
           <img
             src={image}
@@ -79,7 +127,7 @@ function TestimonialCard({
         </div>
       </div>
       {quote && (
-        <p className="text-left text-sm leading-relaxed text-muted-foreground">
+        <p className="relative z-10 text-left text-sm leading-relaxed text-muted-foreground">
           {quote}
         </p>
       )}
@@ -92,7 +140,56 @@ export default function Page() {
     <Container className="p-0">
       <Navbar />
 
-      <main className="relative flex flex-col items-center border-b border-border px-8 py-16 text-center md:py-20">
+      <main className="relative flex w-full flex-col items-center border-b border-border px-8 py-16 text-center md:py-20">
+        {/* Dashed Bottom Fade Grid */}
+        <div
+          className="absolute inset-0 z-0 dark:opacity-10"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, #e7e5e4 1px, transparent 1px),
+              linear-gradient(to bottom, #e7e5e4 1px, transparent 1px)
+            `,
+            backgroundSize: "20px 20px",
+            backgroundPosition: "0 0, 0 0",
+            maskImage: `
+               repeating-linear-gradient(
+                    to right,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                  repeating-linear-gradient(
+                    to bottom,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                  radial-gradient(ellipse 100% 80% at 50% 100%, #000 50%, transparent 90%)
+            `,
+            WebkitMaskImage: `
+        repeating-linear-gradient(
+                    to right,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                  repeating-linear-gradient(
+                    to bottom,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                  radial-gradient(ellipse 100% 80% at 50% 100%, #000 50%, transparent 90%)
+            `,
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in",
+          }}
+        />
+
         {/* Intersection Squares */}
         <div
           className="absolute -bottom-1 left-0 z-10 h-2 w-1 bg-border"
@@ -103,13 +200,24 @@ export default function Page() {
           style={{ clipPath: "polygon(100% 0, 0 50%, 100% 100%)" }}
         />
 
-        <span className="mb-2 font-mono text-sm font-medium text-muted-foreground">
-          -----NEETCODE-----
-        </span>
-        <h1 className="max-w-4xl font-heading text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-          A better way to prepare for coding interviews
-        </h1>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <div className="relative z-10 mb-2 inline-flex items-center gap-2 rounded-none border border-border bg-background/50 px-3 py-1 text-sm font-medium text-muted-foreground backdrop-blur-sm">
+          <div className="h-1.5 w-1.5 animate-pulse bg-foreground"></div>
+          NeetCode
+          <div className="h-1.5 w-1.5 animate-pulse bg-foreground"></div>
+        </div>
+        <div className="relative z-10 max-w-4xl">
+          <h1 className="bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text font-heading text-4xl font-bold tracking-tight text-transparent sm:text-5xl md:text-6xl lg:text-7xl">
+            A better way to prepare for coding interviews
+          </h1>
+          <motion.div
+            initial={{ width: "100%" }}
+            whileInView={{ width: "0%" }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: "easeInOut", delay: 0.1 }}
+            className="absolute top-0 right-0 bottom-0 z-20 bg-foreground"
+          />
+        </div>
+        <div className="relative z-10 mt-10 flex flex-wrap items-center justify-center gap-4">
           <Button size="lg" className="px-8 font-semibold">
             <Link href="#">Start for Free</Link>
           </Button>
@@ -124,6 +232,55 @@ export default function Page() {
       </main>
 
       <section className="relative flex flex-col items-center border-b border-border px-8 py-16 md:py-24">
+        {/* Dashed Bottom Left Fade Grid */}
+        <div
+          className="absolute inset-0 z-0 dark:opacity-10"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, #e7e5e4 1px, transparent 1px),
+              linear-gradient(to bottom, #e7e5e4 1px, transparent 1px)
+            `,
+            backgroundSize: "20px 20px",
+            backgroundPosition: "0 0, 0 0",
+            maskImage: `
+                  repeating-linear-gradient(
+                    to right,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                  repeating-linear-gradient(
+                    to bottom,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                 radial-gradient(ellipse 80% 80% at 100% 100%, #000 50%, transparent 90%)
+            `,
+            WebkitMaskImage: `
+                         repeating-linear-gradient(
+                    to right,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                  repeating-linear-gradient(
+                    to bottom,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                 radial-gradient(ellipse 80% 80% at 100% 100%, #000 50%, transparent 90%)
+            `,
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in",
+          }}
+        />
+
         {/* Intersection Squares */}
         <div
           className="absolute -bottom-1 left-0 z-10 h-2 w-1 bg-border"
@@ -134,11 +291,20 @@ export default function Page() {
           style={{ clipPath: "polygon(100% 0, 0 50%, 100% 100%)" }}
         />
 
-        <div className="grid w-full max-w-6xl grid-cols-1 gap-12 lg:grid-cols-3">
+        <div className="relative z-10 grid w-full max-w-6xl grid-cols-1 gap-12 lg:grid-cols-3">
           <div className="flex flex-col text-left lg:col-span-1">
-            <h2 className="mb-4 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
-              Results
-            </h2>
+            <div className="relative mb-4 w-fit">
+              <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
+                Results
+              </h2>
+              <motion.div
+                initial={{ width: "100%" }}
+                whileInView={{ width: "0%" }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, ease: "easeInOut", delay: 0.2 }}
+                className="absolute top-0 right-0 bottom-0 z-20 bg-foreground"
+              />
+            </div>
             <p className="text-lg text-muted-foreground">
               Thousands of engineers have landed roles at top companies after
               studying with NeetCode. From first-time job seekers to senior
@@ -149,13 +315,17 @@ export default function Page() {
           <div className="flex flex-col gap-6 lg:col-span-2">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {MAIN_TESTIMONIALS.map((testimonial, idx) => (
-                <TestimonialCard key={idx} {...testimonial} />
+                <TestimonialCard key={idx} index={idx} {...testimonial} />
               ))}
 
               {/* Nested grid for the last column containing the two smaller cards stacked in rows */}
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-1">
                 {ADDITIONAL_TESTIMONIALS.map((testimonial, idx) => (
-                  <TestimonialCard key={idx} {...testimonial} />
+                  <TestimonialCard
+                    key={idx}
+                    index={idx + MAIN_TESTIMONIALS.length}
+                    {...testimonial}
+                  />
                 ))}
               </div>
             </div>
@@ -164,6 +334,55 @@ export default function Page() {
       </section>
 
       <section className="relative flex flex-col items-center border-b border-border px-8 py-12 md:py-16">
+        {/* Dashed Bottom Left Fade Grid */}
+        <div
+          className="absolute inset-0 z-0 dark:opacity-10"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, #e7e5e4 1px, transparent 1px),
+              linear-gradient(to bottom, #e7e5e4 1px, transparent 1px)
+            `,
+            backgroundSize: "20px 20px",
+            backgroundPosition: "0 0, 0 0",
+            maskImage: `
+                  repeating-linear-gradient(
+                    to right,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                  repeating-linear-gradient(
+                    to bottom,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                 radial-gradient(ellipse 80% 80% at 100% 100%, #000 50%, transparent 90%)
+            `,
+            WebkitMaskImage: `
+                         repeating-linear-gradient(
+                    to right,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                  repeating-linear-gradient(
+                    to bottom,
+                    black 0px,
+                    black 3px,
+                    transparent 3px,
+                    transparent 8px
+                  ),
+                 radial-gradient(ellipse 80% 80% at 100% 100%, #000 50%, transparent 90%)
+            `,
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in",
+          }}
+        />
+
         {/* Intersection Squares */}
         <div
           className="absolute -bottom-1 left-0 z-10 h-2 w-1 bg-border"
@@ -174,10 +393,10 @@ export default function Page() {
           style={{ clipPath: "polygon(100% 0, 0 50%, 100% 100%)" }}
         />
 
-        <p className="mb-8 text-center text-sm font-medium text-muted-foreground">
+        <p className="relative z-10 mb-8 text-center text-sm font-medium text-muted-foreground">
           Trusted by engineers who landed offers at top companies
         </p>
-        <div className="w-full max-w-5xl">
+        <div className="relative z-10 w-full max-w-5xl">
           <LogoCloud />
         </div>
       </section>

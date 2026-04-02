@@ -34,11 +34,7 @@ export default function Navbar() {
 
         <div className="ml-2 flex items-center gap-4">
           <div className="h-4 w-px bg-border" />
-          <Button
-            variant="secondary"
-            size="sm"
-            className="h-8 rounded-md px-4 text-xs"
-          >
+          <Button variant="outline" size="sm" className="h-8 px-4 text-xs">
             Sign In
           </Button>
         </div>
