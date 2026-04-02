@@ -5,6 +5,8 @@ import Navbar from "@/components/core/navbar"
 import { LogoCloud } from "@/components/logo-cloud"
 import { RoadmapSection } from "@/components/roadmap-section"
 import { CoursesSection } from "@/components/courses-section"
+import { AboutSection } from "@/components/about-section"
+import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -182,6 +184,8 @@ export default function Page() {
 
       {/*<RoadmapSection />*/}
       <CoursesSection />
+      <AboutSection />
+      <Footer />
     </Container>
   )
 }
