@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform } from "motion/react"
 
 const RoadmapNode = ({
   title,
@@ -33,17 +33,17 @@ export function RoadmapSection() {
     offset: ["start start", "end end"],
   })
 
-  // Camera tracking: Pan across the board as it reveals, then zoom out at the end
+  // Camera tracking: Pan across the board as it reveals
   // The roadmap width goes from x=0 to x=1160.
   const scale = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.6, 0.8, 1],
-    [2, 1.5, 1.2, 1.2, 0.55]
+    [0, 0.2, 0.6, 1],
+    [2, 1.5, 1.2, 1.2]
   )
   const xOffset = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.6, 0.8, 1],
-    ["0px", "-290px", "-1160px", "-1160px", "-580px"]
+    [0, 0.2, 0.6, 1],
+    ["0px", "-290px", "-1160px", "-1160px"]
   )
 
   // Step 1: Draw first arrows

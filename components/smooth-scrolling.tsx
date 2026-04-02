@@ -1,11 +1,18 @@
 "use client"
 
-import { ReactLenis } from "@studio-freight/react-lenis"
+import { ReactNode, useEffect } from "react"
+import Lenis from "lenis"
 
-export function SmoothScrolling({ children }: { children: React.ReactNode }) {
-  return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
-      {children as any}
-    </ReactLenis>
-  )
+export function SmoothScrolling({ children }: { children: ReactNode }) {
+  useEffect(() => {
+    const lenis = new Lenis()
+    function raf(time: number) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+    requestAnimationFrame(raf)
+    return () => lenis.destroy()
+  }, [])
+
+  return <>{children}</>
 }
