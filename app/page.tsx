@@ -4,6 +4,9 @@ import Container from "@/components/core/container"
 import Navbar from "@/components/core/navbar"
 import { LogoCloud } from "@/components/logo-cloud"
 import { RoadmapSection } from "@/components/roadmap-section"
+import { CoursesSection } from "@/components/courses-section"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 const MAIN_TESTIMONIALS = [
   {
@@ -104,6 +107,18 @@ export default function Page() {
         <h1 className="max-w-4xl font-heading text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
           A better way to prepare for coding interviews
         </h1>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <Button size="lg" className="px-8 font-semibold">
+            <Link href="#">Start for Free</Link>
+          </Button>
+          <Button
+            size="lg"
+            variant="secondary"
+            className="border border-border px-8 font-semibold"
+          >
+            <Link href="#">Browse Problems</Link>
+          </Button>
+        </div>
       </main>
 
       <section className="relative flex flex-col items-center border-b border-border px-8 py-16 md:py-24">
@@ -165,7 +180,8 @@ export default function Page() {
         </div>
       </section>
 
-      <RoadmapSection />
+      {/*<RoadmapSection />*/}
+      <CoursesSection />
     </Container>
   )
 }

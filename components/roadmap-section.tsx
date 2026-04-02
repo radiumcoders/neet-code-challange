@@ -14,9 +14,9 @@ const RoadmapNode = ({
 }) => (
   <div
     style={{ left: x, top: y }}
-    className="absolute flex w-[180px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-none border border-border bg-card px-4 py-3"
+    className="absolute flex w-[220px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-none border border-border bg-card px-4 py-4"
   >
-    <span className="mb-3 text-center text-xs font-bold text-foreground">
+    <span className="mb-3 text-center text-sm font-bold text-foreground">
       {title}
     </span>
     <div className="h-1.5 w-full overflow-hidden rounded-none bg-muted">
@@ -33,29 +33,38 @@ export function RoadmapSection() {
     offset: ["start start", "end end"],
   })
 
-  // Camera tracking: Pan across the board as it reveals
-  // The roadmap width goes from x=0 to x=1160.
+  // Camera tracking: Pan vertically down the board as it reveals, then zoom out at the end
+  // The roadmap height goes from y=0 to y=1200.
   const scale = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.6, 1],
-    [2, 1.5, 1.2, 1.2]
+    [0, 0.1, 0.7, 0.9, 1],
+    [1.5, 1.2, 1.2, 1.2, 0.55]
   )
+
+  // Pan Y to move the camera down
+  const yOffset = useTransform(
+    scrollYProgress,
+    [0, 0.1, 0.7, 0.9, 1],
+    ["150px", "0px", "-1200px", "-1200px", "-600px"]
+  )
+
+  // Pan X to keep the centered nodes aligned (the tree leans left to x=-300)
   const xOffset = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.6, 1],
-    ["0px", "-290px", "-1160px", "-1160px"]
+    [0, 0.1, 0.7, 0.9, 1],
+    ["0px", "0px", "300px", "300px", "150px"]
   )
 
-  // Step 1: Draw first arrows
-  const drawArrows1 = useTransform(scrollYProgress, [0.0, 0.2], [0, 1])
-
-  // Step 2: Draw the rest of the connecting lines
-  const drawRest = useTransform(scrollYProgress, [0.2, 0.6], [0, 1])
+  // Step-by-step drawing of the lines
+  const draw1 = useTransform(scrollYProgress, [0.0, 0.15], [0, 1])
+  const draw2 = useTransform(scrollYProgress, [0.15, 0.35], [0, 1])
+  const draw3 = useTransform(scrollYProgress, [0.35, 0.55], [0, 1])
+  const draw4 = useTransform(scrollYProgress, [0.55, 0.75], [0, 1])
 
   return (
     <section
       ref={targetRef}
-      className="relative h-[500vh] w-full border-b border-border bg-background"
+      className="relative h-[400vh] w-full border-b border-border bg-background"
     >
       <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
         {/* Intersection Squares */}
@@ -74,105 +83,108 @@ export function RoadmapSection() {
         </div>
 
         {/* Main Canvas Container */}
-        <motion.div style={{ scale, x: xOffset }} className="relative">
-          {/* SVG Connections Canvas */}
-          <svg
-            className="absolute top-0 left-0 overflow-visible text-border"
-            style={{ zIndex: 0 }}
-          >
-            <defs>
-              <marker
-                id="arrowhead"
-                viewBox="0 0 10 10"
-                refX="8"
-                refY="5"
-                markerWidth="6"
-                markerHeight="6"
-                orient="auto-start-reverse"
-              >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
-              </marker>
-            </defs>
-            <g
-              stroke="currentColor"
-              strokeWidth="2"
-              fill="none"
-              markerEnd="url(#arrowhead)"
+        <motion.div
+          style={{ scale, x: xOffset, y: yOffset }}
+          className="relative"
+        >
+          {/* Shift coordinate system to place origin at the center of the wrapper */}
+          <div className="absolute top-0 left-0">
+            {/* SVG Connections Canvas */}
+            <svg
+              className="absolute top-0 left-0 overflow-visible text-border"
+              style={{ zIndex: 0 }}
             >
-              {/* Phase 1 Arrows */}
-              <motion.path
-                style={{ pathLength: drawArrows1 }}
-                d="M 90 0 C 140 0, 140 -120, 200 -120"
-              />
-              <motion.path
-                style={{ pathLength: drawArrows1 }}
-                d="M 90 0 C 140 0, 140 120, 200 120"
-              />
+              <defs>
+                <marker
+                  id="arrowhead"
+                  viewBox="0 0 10 10"
+                  refX="8"
+                  refY="5"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto"
+                >
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+                </marker>
+              </defs>
+              <g
+                stroke="currentColor"
+                strokeWidth="3"
+                fill="none"
+                markerEnd="url(#arrowhead)"
+              >
+                {/* Level 1 -> 2 */}
+                <motion.path
+                  style={{ pathLength: draw1 }}
+                  d="M 0 40 C 0 170, -300 170, -300 260"
+                />
+                <motion.path
+                  style={{ pathLength: draw1 }}
+                  d="M 0 40 C 0 170, 300 170, 300 260"
+                />
 
-              {/* Phase 2 Arrows (Rest of the map) */}
-              {/* From Two Pointers */}
-              <motion.path
-                style={{ pathLength: drawRest }}
-                d="M 380 -120 C 430 -120, 430 -240, 490 -240"
-              />
-              <motion.path
-                style={{ pathLength: drawRest }}
-                d="M 380 -120 C 430 -120, 430 -120, 490 -120"
-              />
-              <motion.path
-                style={{ pathLength: drawRest }}
-                d="M 380 -120 C 430 -120, 430 0, 490 0"
-              />
+                {/* Level 2 -> 3 */}
+                <motion.path
+                  style={{ pathLength: draw2 }}
+                  d="M -300 340 C -300 470, -600 470, -600 560"
+                />
+                <motion.path
+                  style={{ pathLength: draw2 }}
+                  d="M -300 340 L -300 560"
+                />
+                <motion.path
+                  style={{ pathLength: draw2 }}
+                  d="M -300 340 C -300 470, 0 470, 0 560"
+                />
 
-              {/* From Binary Search -> Trees (Converging down) */}
-              <motion.path
-                style={{ pathLength: drawRest }}
-                d="M 670 0 C 720 0, 720 120, 780 120"
-              />
+                {/* Level 3 -> 4 */}
+                <motion.path
+                  style={{ pathLength: draw3 }}
+                  d="M -600 640 C -600 770, -300 770, -300 860"
+                />
+                <motion.path
+                  style={{ pathLength: draw3 }}
+                  d="M 0 640 C 0 770, -300 770, -300 860"
+                />
 
-              {/* From Linked List -> Trees */}
-              <motion.path
-                style={{ pathLength: drawRest }}
-                d="M 670 -240 C 750 -240, 720 120, 780 120"
-              />
+                {/* Level 4 -> 5 */}
+                <motion.path
+                  style={{ pathLength: draw4 }}
+                  d="M -300 940 C -300 1070, -600 1070, -600 1160"
+                />
+                <motion.path
+                  style={{ pathLength: draw4 }}
+                  d="M -300 940 L -300 1160"
+                />
+                <motion.path
+                  style={{ pathLength: draw4 }}
+                  d="M -300 940 C -300 1070, 0 1070, 0 1160"
+                />
+              </g>
+            </svg>
 
-              {/* From Trees -> Tries, Heap, Backtracking */}
-              <motion.path
-                style={{ pathLength: drawRest }}
-                d="M 960 120 C 1010 120, 1010 0, 1070 0"
-              />
-              <motion.path
-                style={{ pathLength: drawRest }}
-                d="M 960 120 C 1010 120, 1010 120, 1070 120"
-              />
-              <motion.path
-                style={{ pathLength: drawRest }}
-                d="M 960 120 C 1010 120, 1010 240, 1070 240"
-              />
-            </g>
-          </svg>
+            {/* Nodes */}
+            <div className="absolute top-0 left-0 z-10">
+              {/* Level 1 */}
+              <RoadmapNode title="Arrays & Hashing" x={0} y={0} />
 
-          {/* Nodes */}
-          <div className="absolute top-0 left-0 z-10">
-            {/* Initial Node always visible */}
-            <RoadmapNode title="Arrays & Hashing" x={0} y={0} />
+              {/* Level 2 */}
+              <RoadmapNode title="Two Pointers" x={-300} y={300} />
+              <RoadmapNode title="Stack" x={300} y={300} />
 
-            {/* Column 2 */}
-            <RoadmapNode title="Two Pointers" x={290} y={-120} />
-            <RoadmapNode title="Stack" x={290} y={120} />
+              {/* Level 3 */}
+              <RoadmapNode title="Linked List" x={-600} y={600} />
+              <RoadmapNode title="Sliding Window" x={-300} y={600} />
+              <RoadmapNode title="Binary Search" x={0} y={600} />
 
-            {/* Column 3 */}
-            <RoadmapNode title="Linked List" x={580} y={-240} />
-            <RoadmapNode title="Sliding Window" x={580} y={-120} />
-            <RoadmapNode title="Binary Search" x={580} y={0} />
+              {/* Level 4 */}
+              <RoadmapNode title="Trees" x={-300} y={900} />
 
-            {/* Column 4 */}
-            <RoadmapNode title="Trees" x={870} y={120} />
-
-            {/* Column 5 */}
-            <RoadmapNode title="Tries" x={1160} y={0} />
-            <RoadmapNode title="Heap / Priority Queue" x={1160} y={120} />
-            <RoadmapNode title="Backtracking" x={1160} y={240} />
+              {/* Level 5 */}
+              <RoadmapNode title="Tries" x={-600} y={1200} />
+              <RoadmapNode title="Heap / Priority Queue" x={-300} y={1200} />
+              <RoadmapNode title="Backtracking" x={0} y={1200} />
+            </div>
           </div>
         </motion.div>
       </div>
