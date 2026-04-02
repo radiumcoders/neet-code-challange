@@ -17,6 +17,9 @@ export function AboutSection() {
         {/* Image Column */}
         <div className="flex justify-center lg:justify-end">
           <div className="relative w-full max-w-lg overflow-visible bg-transparent grayscale filter transition-all duration-300 hover:grayscale-0">
+            {/* Subtle background gradient behind Navi */}
+            <div className="absolute inset-0 -z-10 rounded-full bg-gradient-to-tr from-sky-400/20 to-indigo-400/20 blur-3xl dark:from-sky-400/10 dark:to-indigo-400/10" />
+
             {/* The user should place their actual image in public/navi.png or update this src */}
             <img
               src="https://neetcode.io/assets/navi.png"
