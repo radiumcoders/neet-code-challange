@@ -299,18 +299,9 @@ export function CoursesSection() {
       <div className="relative z-10 flex w-full max-w-6xl flex-col">
         {/* Header */}
         <div className="mb-16 flex flex-col items-center text-center">
-          <div className="relative mb-4 w-fit">
-            <h2 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl">
-              Courses
-            </h2>
-            <motion.div
-              initial={{ width: "100%" }}
-              whileInView={{ width: "0%" }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: "easeInOut", delay: 0.1 }}
-              className="absolute top-0 right-0 bottom-0 z-20 bg-foreground"
-            />
-          </div>
+          <h2 className="mb-4 font-heading text-4xl font-bold tracking-tight sm:text-5xl">
+            Courses
+          </h2>
           <p className="text-lg text-muted-foreground">
             Structured learning paths from fundamentals to advanced topics.
           </p>
@@ -325,22 +316,9 @@ export function CoursesSection() {
             >
               {/* Category Info */}
               <div className="flex flex-col lg:col-span-4">
-                <div className="relative mb-4 w-fit">
-                  <h3 className="font-heading text-3xl font-bold tracking-tight">
-                    {category.title}
-                  </h3>
-                  <motion.div
-                    initial={{ width: "100%" }}
-                    whileInView={{ width: "0%" }}
-                    viewport={{ once: true }}
-                    transition={{
-                      duration: 0.5,
-                      ease: "easeInOut",
-                      delay: 0.1 + idx * 0.15,
-                    }}
-                    className="absolute top-0 right-0 bottom-0 z-20 bg-foreground"
-                  />
-                </div>
+                <h3 className="mb-4 font-heading text-3xl font-bold tracking-tight">
+                  {category.title}
+                </h3>
                 <p className="text-base leading-relaxed text-muted-foreground">
                   {category.description}
                 </p>

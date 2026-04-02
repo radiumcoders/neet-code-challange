@@ -8,7 +8,6 @@ import { Footer } from "@/components/footer"
 import { LogoCloud } from "@/components/logo-cloud"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { motion } from "framer-motion"
 
 const MAIN_TESTIMONIALS = [
   {
@@ -205,18 +204,9 @@ export default function Page() {
           NeetCode
           <div className="h-1.5 w-1.5 animate-pulse bg-foreground"></div>
         </div>
-        <div className="relative z-10 max-w-4xl">
-          <h1 className="bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text font-heading text-4xl font-bold tracking-tight text-transparent sm:text-5xl md:text-6xl lg:text-7xl">
-            A better way to prepare for coding interviews
-          </h1>
-          <motion.div
-            initial={{ width: "100%" }}
-            whileInView={{ width: "0%" }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: "easeInOut", delay: 0.1 }}
-            className="absolute top-0 right-0 bottom-0 z-20 bg-foreground"
-          />
-        </div>
+        <h1 className="relative z-10 max-w-4xl bg-gradient-to-b from-foreground to-muted-foreground bg-clip-text font-heading text-4xl font-bold tracking-tight text-transparent sm:text-5xl md:text-6xl lg:text-7xl">
+          A better way to prepare for coding interviews
+        </h1>
         <div className="relative z-10 mt-10 flex flex-wrap items-center justify-center gap-4">
           <Button size="lg" className="px-8 font-semibold">
             <Link href="#">Start for Free</Link>
@@ -293,18 +283,9 @@ export default function Page() {
 
         <div className="relative z-10 grid w-full max-w-6xl grid-cols-1 gap-12 lg:grid-cols-3">
           <div className="flex flex-col text-left lg:col-span-1">
-            <div className="relative mb-4 w-fit">
-              <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
-                Results
-              </h2>
-              <motion.div
-                initial={{ width: "100%" }}
-                whileInView={{ width: "0%" }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, ease: "easeInOut", delay: 0.2 }}
-                className="absolute top-0 right-0 bottom-0 z-20 bg-foreground"
-              />
-            </div>
+            <h2 className="mb-4 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
+              Results
+            </h2>
             <p className="text-lg text-muted-foreground">
               Thousands of engineers have landed roles at top companies after
               studying with NeetCode. From first-time job seekers to senior
