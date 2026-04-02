@@ -10,7 +10,7 @@ type Course = {
   description: string
   duration: string
   difficulty: Difficulty
-  hoverGradientIdx?: number
+  hoverGradient?: string
 }
 
 type Category = {
