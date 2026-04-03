@@ -4,6 +4,7 @@ import { AboutSection } from "@/components/about-section"
 import Container from "@/components/core/container"
 import Navbar from "@/components/core/navbar"
 import { CoursesSection } from "@/components/courses-section"
+import { PricingSection } from "@/components/pricing-section"
 import { Footer } from "@/components/footer"
 import { LogoCloud } from "@/components/logo-cloud"
 import { Button } from "@/components/ui/button"
@@ -384,6 +385,7 @@ export default function Page() {
 
       {/*<RoadmapSection />*/}
       <CoursesSection />
+      <PricingSection />
       <AboutSection />
       <Footer />
     </Container>

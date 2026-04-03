@@ -8,7 +8,6 @@ import {
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { SmoothScrolling } from "@/components/smooth-scrolling"
 import { cn } from "@/lib/utils"
 
 const inconsolata = Inconsolata({
@@ -58,9 +57,7 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ThemeProvider>
-          <SmoothScrolling>{children}</SmoothScrolling>
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   )
